@@ -1,0 +1,125 @@
+@startuml classes_banf_sendreceive
+set namespaceSeparator none
+class "DBtool" as banf_sendreceive.utils.send_receive.db_inserter.DBtool {
+  cols
+  conn
+  cur
+  dbname : str
+  host : str
+  is_running : bool
+  password : str
+  port : int
+  q : Queue
+  table_name : str
+  user : str
+  connectConfig(host: str, dbname: str, user: str, password: str, port: int) -> psycopg2.extensions.connection
+  getColumnsName(cur: psycopg2.extensions.cursor, table_name: str) -> list
+  insertData(conn: psycopg2.extensions.connection, cur: psycopg2.extensions.cursor, table_name: str, df: pd.DataFrame) -> None
+  put(data_list: list) -> None
+  run() -> None
+  startThread()
+  stopThread()
+}
+class "FileObserver" as banf_sendreceive.utils.etc.observe.FileObserver {
+  mqtt_tool : NoneType
+  observer : FSEventsObserver, KqueueObserver, WindowsApiObserver, InotifyObserver, PollingObserver, NoneType
+  s3_tool : NoneType
+  setObserver(path: str) -> None
+  streamingOff() -> None
+  streamingOn() -> None
+}
+class "ForMeasurement" as banf_sendreceive.utils.preprocessing.ForMeasurement {
+  STEP_SIZE : int
+  client_col : list
+  file_abs_path : str
+  mobile_col : list
+  packet_col : list
+  struct_fmt : str
+  transformToDataFrame(file_abs_path: str) -> pd.DataFrame
+  transformToReceivePacket(packet: list) -> list
+  transformToSendPacket(file_abs_path: str) -> list
+}
+class "KAFKAtool" as banf_sendreceive.utils.send_receive.kafka_consumer.KAFKAtool {
+  c
+  db_tool
+  fm
+  struct_fmt : str
+  startSubscribe() -> None
+}
+class "LogStringHandler" as banf_sendreceive.sender_main.LogStringHandler {
+  target_widget
+  emit(record) -> None
+}
+class "MQTTtool" as banf_sendreceive.utils.send_receive.mqtt_receiver.MQTTtool {
+  client : Client
+  db_tool
+  struct_fmt : str
+  on_connect(client, userdata, flags, rc, properties)
+  on_disconnect(client, userdata, flags, rc)
+  on_message(client, userdata, msg)
+  on_subscribe(client, userdata, mid, granted_qos, properties)
+  startSubscribe() -> None
+}
+class "MQTTtool" as banf_sendreceive.utils.send_receive.mqtt_sender.MQTTtool {
+  client : NoneType, Client
+  fm
+  is_running : bool
+  q : Queue
+  connectBroker(address: str, port: int, username: str, pw: str) -> paho.Client
+  disconnectBroker() -> None
+  on_connect(client, userdata, flags, rc, properties) -> None
+  on_disconnect(client, userdata, flags, rc) -> None
+  on_publish(client, userdata, mid, properties) -> None
+  publishData(topic: str, msg: str) -> None
+  put(file_path: str) -> None
+  run() -> None
+  startThread()
+  stopThread()
+}
+class "MyApp" as banf_sendreceive.sender_main.MyApp {
+  dir : str
+  isFirstDirectory : bool
+  isStreaming : bool
+  logger : RootLogger, NoneType, Logger
+  streamer : NoneType
+  closeEvent(event: QCloseEvent) -> None
+  createDir(directory: str) -> None
+  selectDirectory() -> None
+  setStatus(text: str) -> None
+  setupProperties() -> None
+  startStreaming() -> None
+}
+class "MyEventHandler" as banf_sendreceive.utils.etc.observe.MyEventHandler {
+  mqtt_tool
+  s3_tool
+  on_created(event) -> None
+}
+class "S3tool" as banf_sendreceive.utils.send_receive.s3_sender.S3tool {
+  client : NoneType, 
+  is_running : bool
+  q : Queue
+  connect(access_key: str, secret_key: str) -> botocore.client.BaseClient
+  put(file_path: str) -> None
+  run() -> None
+  startThread()
+  stopThread()
+  uploadFile(file_path: str, bucket_name: str) -> None
+}
+class "Singleton" as banf_sendreceive.utils.etc.pattern.Singleton {
+}
+class "Ui_Form" as banf_sendreceive.ui.MainWidget.Ui_Form {
+  browseDirBtn
+  dirLabel
+  gridLayout
+  horizontalLayout
+  horizontalSpacer
+  horizontalSpacer_2
+  horizontalSpacer_3
+  logTextBrowser
+  statusLabel
+  toggleBtn
+  verticalLayout
+  retranslateUi(Form)
+  setupUi(Form)
+}
+@enduml

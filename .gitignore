@@ -1,0 +1,9 @@
+.vscode/
+sample_dir/
+__pycache__/
+
+*.txt
+*.csv
+*.png
+*.h5
+*.ipynb

@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pyside6 = "*"
+psycopg2-binary = "*"
+confluent-kafka = "*"
+paho-mqtt = "*"
+watchdog = "*"
+black = "*"
+boto3 = "*"
+botocore = "*"
+numpy = "*"
+pandas = "*"
+pyarrow = "*"
+tqdm = "*"
+pyinstaller = "*"
+tinyaes = "*"
+pylint = "*"
+graphviz = "*"
+
+[requires]
+python_version = "3.10"
+python_full_version = "3.10.9"
